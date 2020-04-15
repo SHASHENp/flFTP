@@ -91,7 +91,8 @@ namespace Rainbow{
 		}
 
 #endif
-		int sd, type;
+		socket_t sd;
+		int type;
 
 		if((pServen = getservbyname(service.c_str(), transport.c_str())) != 0)
 			sin.sin_port = pServen->s_port;
