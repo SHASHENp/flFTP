@@ -3,5 +3,6 @@
 ## install
 
 $ git clone https://github.com/SHASHENp/flFTP.git   
-$ cmake . && make  
+$ mkdir build && cd build  
+$ cmake .. && make  
 $ make install  
