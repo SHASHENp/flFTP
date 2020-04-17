@@ -35,7 +35,6 @@ install(FILES flFTP.h DESTINATION include)
 
 if(UNIX)
 	target_link_libraries(flFTP PUBLIC pthread)
-	target_link_libraries(flTest pthread)
 endif()
 
 target_link_libraries(flTest flFTP)
