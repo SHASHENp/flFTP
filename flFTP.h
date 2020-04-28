@@ -7,7 +7,6 @@
 #include <functional>
 #include <list>
 #include <fstream>
-#include <iostream>
 
 #if defined(_WIN32)
 #include <WinSock2.h>
@@ -289,12 +288,10 @@ namespace details{
 					_flag->set();
 			}
 
-			Thread(Thread &&rhs) DFL_NOEXCEPT
+			Thread(Thread &&rhs) DFL_NOEXCEPT :
+				_flag(rhs._flag),
+				_t(std::move(rhs._t))
 			{
-				if(this == &rhs)
-					return;
-				_t = std::move(rhs._t);
-				_flag = rhs._flag;
 				rhs._flag = nullptr;
 			}
 
@@ -566,6 +563,7 @@ namespace details{
 			std::unique_ptr<CommPort> _commPort;
 			std::unique_ptr<DataPort> _dataPort;
 	};
+
 }	/* namespace Rainbow */
 
 #endif //FLFTP_H

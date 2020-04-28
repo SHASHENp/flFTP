@@ -7,10 +7,7 @@
 
 #include "flFTP.h" 
 #include "tinyxml2/tinyxml2.h"
-#include <string>
 #include <cstring>
-#include <iostream>
-#include <map>
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
@@ -18,10 +15,8 @@
 #include <netinet/in.h>
 #endif
 #ifdef __linux 
-#include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <errno.h>
 #include <limits.h>
 #endif
 
@@ -394,11 +389,10 @@ namespace Rainbow{
 			}
 
 			percentage = recvSize / (double)size;
-			std::for_each(_progressList.begin(), _progressList.end(),
-					[percentage](IProgress *iprogress)
-				{
-						iprogress->DoProgress(percentage);	
-				});
+			for(auto elem : _progressList)
+			{
+				elem->DoProgress(percentage);
+			}
 			if(this_thread_interrupt_flag.is_set())
 			{
 				std::lock_guard<std::mutex> lk(_mt);
@@ -473,13 +467,11 @@ namespace Rainbow{
 			//has record
 			if(task)
 			{
-				std::cout<<"has record"<<std::endl;
 				tinyxml2::XMLElement *offsetNode = task->FirstChildElement("Offset");
 				offsetNode->SetText(info.offset);
 			}
 			else 
 			{
-				std::cout<<"not record"<<std::endl;
 				tinyxml2::XMLElement *new_task = doc.NewElement("task");
 				tinyxml2::XMLElement *transferMode = doc.NewElement("TransferMode");
 				tinyxml2::XMLElement *host = doc.NewElement("Host");
@@ -679,22 +671,19 @@ namespace Rainbow{
 	}
 
 
-	flFTP::flFTP(flFTP &&rhs) DFL_NOEXCEPT
-	{
-		if(this == &rhs)
-			return;
-		_transferInfo.reset(rhs._transferInfo.release());
-		_type = rhs._type;
-		_getBreakPointFunc = std::move(rhs._getBreakPointFunc);
-		_serverPath = std::move(rhs._serverPath);
-		_localPath = std::move(rhs._localPath);
-		_host = std::move(rhs._host);
-		_username = std::move(rhs._username);
-		_password = std::move(rhs._password);
-		_errorMessage = std::move(rhs._errorMessage);
-		_commPort.reset(rhs._commPort.release());
-		_dataPort.reset(rhs._dataPort.release());
-	}
+	flFTP::flFTP(flFTP &&rhs) DFL_NOEXCEPT :
+			_transferInfo(rhs._transferInfo.release()),
+			_type(rhs._type),
+			_getBreakPointFunc(std::move(rhs._getBreakPointFunc)),
+			_serverPath(std::move(rhs._serverPath)),
+			_localPath(std::move(rhs._localPath)),
+			_host(std::move(rhs._host)),
+			_username(std::move(rhs._username)),
+			_password(std::move(rhs._password)),
+			_errorMessage(std::move(rhs._errorMessage)),
+			_commPort(rhs._commPort.release()),
+			_dataPort(rhs._dataPort.release())
+	{}
 
 	flFTP &flFTP::operator=(flFTP &&rhs) DFL_NOEXCEPT 
 	{
