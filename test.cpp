@@ -47,7 +47,6 @@ Rainbow::flFTP test(Progress &p)
 		exit(1);
 	}
 
-	std::this_thread::sleep_for(std::chrono::seconds(3));
 	return ftp;
 }
 
